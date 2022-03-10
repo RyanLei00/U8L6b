@@ -24,12 +24,13 @@ public class Encryptor
 
   public void fillBlock(String str)
   {
-    if(str.length() != 15){
-      if(str.length() > 15){
-        str = str.substring(0, 15);
+    int size = numRows * numCols;
+    if(str.length() != size){
+      if(str.length() > size){
+        str = str.substring(0, size);
       }
       else{
-        for(int i = str.length(); i < 15; i++) {
+        for(int i = str.length(); i < size; i++) {
           str = str + "A";
         }
       }
@@ -62,8 +63,10 @@ public class Encryptor
    */
   public String encryptMessage(String message)
   {
+    String str = "";
     fillBlock(message);
-    return encryptBlock();
+    str = encryptBlock();
+    return str;
   }
   
   /**  Decrypts an encrypted message. All filler 'A's that may have been
@@ -90,10 +93,17 @@ public class Encryptor
    */
   public String decryptMessage(String encryptedMessage)
   {
+    int i = 0;
+    for (int c = 0; c < letterBlock[0].length; c++) {
+      for(int r = 0; r < letterBlock.length; r++) {
+        letterBlock[r][c] = encryptedMessage.substring(i, i + 1);
+        i++;
+      }
+    }
     String decrypted = "";
     for(int r = 0; r < letterBlock.length; r++){
       for(int c = 0; c < letterBlock[0].length; c++){
-        decrypted = letterBlock[r][c];
+        decrypted += letterBlock[r][c];
       }
     }
     return decrypted;
