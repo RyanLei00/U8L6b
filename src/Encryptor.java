@@ -16,7 +16,7 @@ public class Encryptor
     numRows = r;
     numCols = c;
   }
-  
+
   public String[][] getLetterBlock()
   {
     return letterBlock;
@@ -55,57 +55,39 @@ public class Encryptor
     return encrypted;
   }
 
-  /** Encrypts a message.
-   *
-   *  @param message the string to be encrypted
-   *
-   *  @return the encrypted message; if message is the empty string, returns the empty string
-   */
   public String encryptMessage(String message)
   {
     String str = "";
-    fillBlock(message);
-    str = encryptBlock();
+    while(message.length() > 0) {
+      fillBlock(message);
+      if(message.length() > numRows * numCols){
+        message = message.substring(numRows * numCols);
+      }
+      else{
+        message = "";
+      }
+      str += encryptBlock();
+    }
     return str;
   }
-  
-  /**  Decrypts an encrypted message. All filler 'A's that may have been
-   *   added during encryption will be removed, so this assumes that the
-   *   original message (BEFORE it was encrypted) did NOT end in a capital A!
-   *
-   *   NOTE! When you are decrypting an encrypted message,
-   *         be sure that you have initialized your Encryptor object
-   *         with the same row/column used to encrypted the message! (i.e. 
-   *         the �encryption key� that is necessary for successful decryption)
-   *         This is outlined in the precondition below.
-   *
-   *   Precondition: the Encryptor object being used for decryption has been
-   *                 initialized with the same number of rows and columns
-   *                 as was used for the Encryptor object used for encryption. 
-   *  
-   *   @param encryptedMessage  the encrypted message to decrypt
-   *
-   *   @return  the decrypted, original message (which had been encrypted)
-   *
-   *   TIP: You are encouraged to create other helper methods as you see fit
-   *        (e.g. a method to decrypt each section of the decrypted message,
-   *         similar to how encryptBlock was used)
-   */
+
   public String decryptMessage(String encryptedMessage)
   {
-    int i = 0;
-    for (int c = 0; c < letterBlock[0].length; c++) {
-      for(int r = 0; r < letterBlock.length; r++) {
-        letterBlock[r][c] = encryptedMessage.substring(i, i + 1);
-        i++;
+    encryptedMessage = decryptor(encryptedMessage);
+    Encryptor decrypt = new Encryptor(numCols,numRows);
+    return decryptor(decrypt.encryptMessage(encryptedMessage));
+  }
+
+  public static String decryptor(String str)
+  {
+    int length = str.length();
+    for (int i = str.length() - 1; i >= 0 ; i--) {
+      if(str.charAt(i) != 'A')
+      {
+        length = i + 1;
+        break;
       }
     }
-    String decrypted = "";
-    for(int r = 0; r < letterBlock.length; r++){
-      for(int c = 0; c < letterBlock[0].length; c++){
-        decrypted += letterBlock[r][c];
-      }
-    }
-    return decrypted;
+    return str.substring(0,length);
   }
 }
